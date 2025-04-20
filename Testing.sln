@@ -1,0 +1,27 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Mars", "Mars.pyproj", "{035ED51F-9F57-410E-8653-D83906679CAC}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Steam", "..\Steam\Steam.pyproj", "{13664507-2DDA-4686-88BA-CBF056A5178F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{035ED51F-9F57-410E-8653-D83906679CAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{035ED51F-9F57-410E-8653-D83906679CAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13664507-2DDA-4686-88BA-CBF056A5178F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13664507-2DDA-4686-88BA-CBF056A5178F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8D5E56E-E3D0-4E62-ADE3-050E6DC00C15}
+	EndGlobalSection
+EndGlobal
