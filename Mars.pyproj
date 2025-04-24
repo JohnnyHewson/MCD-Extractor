@@ -24,8 +24,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="MCD_Extraction.py" />
-    <Compile Include="Testing.py" />
-    <Compile Include="TextToCSV.py" />
+    <Compile Include="Old Code\Testing.py" />
+    <Compile Include="Old Code\TextToCSV.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Old Code\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

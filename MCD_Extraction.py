@@ -5,7 +5,7 @@ from scipy.io import savemat
 import numpy as np
 
 ### ADJUST VARIABLES HERE ###
-def extract_data(solarLong,localTime):
+def extract_data(solarLong,localTime, max_connection_attempts):
     ###variables###
     var1 = "solzenang" #Solar zenith angle (deg)
     var2 = "fluxsurf_dn_sw" #Incident solar flux on horizontal surface (W/m2)
@@ -20,18 +20,33 @@ def extract_data(solarLong,localTime):
 
     base_url=f'https://www-mars.lmd.jussieu.fr/mcd_python/cgi-bin/mcdcgi.py?var1={var1}&var2={var2}&var3={var3}&var4={var4}&datekeyhtml={datetype}&ls={solarLong}&localtime={localTime}&year={earthYear}&month={earthMonth}&day={earthDay}&hours={earthHour}&minutes={earthMinute}&seconds={earthSecond}&julian={julianDay}&martianyear={marsYear}&sol={sols}&latitude={marsLat}&longitude={marsLong}&altitude={marsAlt}&zkey={altType}&spacecraft={spacecraft}&isfixedlt={localTimeIsFixed}&dust={dustScenario}&hrkey={isHighRes}&averaging={averagingType}&dpi={figureFormat}&islog={isLogValues}&colorm={colormapType}&minval={minValue}&maxval={maxValue}&proj={mapType}&palt={projAlt}&plon={projLong}&plat={projLat}&trans={transparency}&iswind={isWind}&latpoint={markerLat}&lonpoint={markerLong}'
 
-    response = requests.get(base_url, timeout=10)
+    response = attempt_connection(base_url, max_connection_attempts)
     data_url = r'https://www-mars.lmd.jussieu.fr/mcd_python'+response.text[response.text.find(r"/txt"):response.text.find(">Click")-1]
     
     return data_url
 
-def convert_data(data_url, dfs):
-    content = requests.get(data_url).text
+def attempt_connection(url, max_connection_attempts):
+    attempts = 1
+    while attempts < max_connection_attempts:
+        try:
+            response = requests.get(url, timeout=10)
+            return response
+        except requests.exceptions.ConnectTimeout as e:
+            print(f"ERROR: {e}")
+            print(f"Attempt [{attempts}/{max_connection_attempts}]")
+            retries += 1
+
+    raise requests.exceptions.ConnectTimeout("Server Unresponsive")
+
+def convert_data(data_url, dfs, max_connection_attempts):
+    # Attempt to collect data
+    response = attempt_connection(data_url, max_connection_attempts)
+    content = response.text
 
     # Initialize a list to hold DataFrames for each dataset
     dataset_blocks = content.split('MCD_v6.1 with climatology average solar scenario.')
-    # Iterate over the dataset blocks
 
+    # Iterate over the dataset blocks
     varnum = 0
     for block in dataset_blocks[1:]:
         # Clean any extra whitespace or empty lines
@@ -74,12 +89,13 @@ def main():
     download_directory = download_directory if download_directory != '' else os.getcwd() #I just copy pasted this from the savemat line, idk why its not happy
     array_dict = {}
     array_4d_dict = {}
+    max_connection_attempts = 3
     for solarLong in range(15,360+15,30): #range doesn't include target
         #Setup dict of lists of df for each hour
         dfs = {}
         for localTime in range(0,25):
-            data_url = extract_data(solarLong, localTime)
-            dfs = convert_data(data_url, dfs)
+            data_url = extract_data(solarLong, localTime, max_connection_attempts)
+            dfs = convert_data(data_url, dfs, max_connection_attempts)
             print(f"Collected data for {solarLong}_{localTime}")
         # Stack them into a 3D array: shape will be (hours, longitude, latitude)
         for var in dfs:
